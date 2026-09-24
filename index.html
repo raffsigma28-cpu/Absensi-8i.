@@ -8,3 +8,4 @@ function dl(){let A=JSON.parse(localStorage.a||'{}');let c='Tanggal,Nama,Status\
 function wa(){let A=JSON.parse(localStorage.a||'{}');let k=new Date().toISOString().slice(0,10);let d=A[k]||{};if(!Object.keys(d).length)return alert('Belum ada absen hari ini');let t=`*REKAP ABSEN 8I - ${k}*%0A%0A`;for(let nm in d)t+=`- ${nm} : ${d[nm]}%0A`;t+=`%0ATotal: ${Object.keys(d).length} siswa`;window.open(`https://wa.me/${NOMOR_WA}?text=${t}`,'_blank')}
 R();
 </script></body></html>
+<button onclick="hapusSatu(index)">🗑️</button>
