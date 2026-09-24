@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Absen Kelas 8I</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui;background:#f5f7fb;color:#111;padding:15px}
+.container{max-width:700px;margin:auto;background:#fff;border-radius:16px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+h1{margin:0 0 5px;font-size:24px;text-align:center} .sub{text-align:center;color:#666;font-size:13px;margin-bottom:15px}
+.date-bar{display:flex;gap:10px;margin-bottom:15px} input[type=date]{flex:1;padding:10px;border:1px solid #ddd;border-radius:8px}
+.btn{padding:10px 14px;border:none;border-radius:8px;font-weight:600;cursor:pointer}
+.btn-save{background:#111;color:#fff;width:100%;margin-top:10px;padding:14px}
+.btn-excel{background:#0f9d58;color:#fff} .btn-reset{background:#fee2e2;color:#991b1b}
+.table{width:100%;border-collapse:collapse;margin-top:10px}
+.table th{text-align:left;font-size:12px;color:#666;padding:8px;border-bottom:2px solid #eee}
+.table td{padding:10px 8px;border-bottom:1px solid #f0f0f0;font-size:14px}
+.status{display:flex;gap:5px} .st{width:32px;height:32px;border-radius:50%;border:2px solid #ddd;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px}
+.st.hadir.active{background:#dcfce7;border-color:#22c55e;color:#15803d}
+.st.sakit.active{background:#fef9c3;border-color:#eab308;color:#a16207}
+.st.alpa.active{background:#fee2e2;border-color:#ef4444;color:#b91c1c}
+.add-box{display:flex;gap:8px;margin:10px 0} .add-box input{flex:1;padding:10px;border:1px solid #ddd;border-radius:8px}
+.rekap{display:flex;gap:10px;margin-top:15px} .box{flex:1;text-align:center;padding:10px;background:#f8fafc;border-radius:10px} .box b{font-size:20px;display:block}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Absen Kelas 8I</h1>
+<p class="sub">raffsigma28-cpu.github.io/Absen-kelas-8i</p>
+<div class="date-bar">
+<input type="date" id="tgl">
+<button class="btn btn-excel" onclick="exportExcel()">Excel</button>
+<button class="btn btn-reset" onclick="resetAll()">Reset</button>
+</div>
+<div class="add-box">
+<input type="text" id="namaBaru" placeholder="Tambah nama siswa baru...">
+<button class="btn" style="background:#6a00ff;color:#fff" onclick="tambahSiswa()">Tambah</button>
+</div>
+<table class="table">
+<thead><tr><th>No</th><th>Nama</th><th
