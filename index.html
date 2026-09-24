@@ -3,79 +3,433 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Absensi 8I</title>
+
+<title>Absensi Siswa 8I</title>
+
 <style>
-body{font-family:Arial;background:#f5f7ff;padding:15px}
-h2{text-align:center}
-input,select{width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #ccc}
-.btn{width:100%;padding:12px;border:none;border-radius:8px;background:#3b82f6;color:white;font-weight:bold;margin-top:8px}
-.card{background:white;padding:15px;border-radius:12px;margin-top:15px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
-.row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #eee}
-.badge{padding:3px 8px;border-radius:12px;font-size:12px;color:white}
-.alpa{background:#ef4444}.hadir{background:#22c55e}.sakit{background:#f59e0b}.izin{background:#6366f1}
-.del{background:#fee2e2;border:none;padding:5px 8px;border-radius:6px;cursor:pointer}
-</style>
-</head>
-<body>
-<h2>Absensi Siswa 8I</h2>
-<input id="nama" placeholder="Nama Siswa">
-<select id="ket">
-  <option value="Hadir">Hadir</option>
-  <option value="Sakit">Sakit</option>
-  <option value="Izin">Izin</option>
-  <option value="Alpa">Alpa</option>
-</select>
-<button class="btn" onclick="tambah()">Simpan Absensi</button>
-
-<div class="card">
-  <b>Rekap Hari Ini (Masuk ke raffsigma28@gmail.com)</b>
-  <div id="list" style="margin-top:10px">Loading...</div>
-  <button onclick="hapusSemua()" style="margin-top:10px;width:100%;background:#eee;border:none;padding:8px;border-radius:8px">Hapus Semua</button>
-</div>
-
-<script>
-const URL_GAS_LU = "https://script.google.com/macros/s/XXXX/exec"; // <- GANTI INI PAKE LINK WEB APP LU
-
-// Data lama biar gak hilang
-let key = 'absensi_8i';
-let dataLokal = JSON.parse(localStorage.getItem(key) || localStorage.getItem('absensi') || '[]');
-
-async function tambah(){
-  let nama = document.getElementById('nama').value;
-  let ket = document.getElementById('ket').value;
-  if(!nama) return alert('Isi nama');
-
-  if(URL_GAS_LU.includes("XXXX")){
-    alert("Link Google Sheet belum diganti! Ganti dulu URL_GAS_LU nya");
-    return;
-  }
-
-  // Kirim ke Google Sheet + Email lu
-  await fetch(URL_GAS_LU, {
-    method: "POST",
-    mode: "no-cors",
-    body: JSON.stringify({nama, ket})
-  });
-
-  alert("Absen terkirim ke raffsigma28@gmail.com!");
-  document.getElementById('nama').value='';
-  loadData();
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
-async function loadData(){
-  try{
-    if(URL_GAS_LU.includes("XXXX")){
-      // Kalau belum ada link, tampilin data lokal dulu biar gak kosong
-      renderLokal();
-      return;
-    }
-    let res = await fetch(URL_GAS_LU);
-    let rows = await res.json();
-    let list = document.getElementById('list');
-    list.innerHTML = '';
-    rows.reverse().forEach(r=>{
-      // r = [tanggal, nama, ket, kelas]
-      let nama = r[1]; let ket = r[2];
-      list.innerHTML += `<div class="row"><span>${nama}</span><span><span class="badge ${ket.toLowerCase()}">${ket}</span></span></div>`;
-    });
-    if(rows.length==0) list.inner
+body{
+  font-family:Inter,Arial,sans-serif;
+  background:linear-gradient(135deg,#eef2ff,#f8fafc);
+  color:#172033;
+  min-height:100vh;
+}
+
+.container{
+  width:100%;
+  max-width:850px;
+  margin:auto;
+  padding:20px;
+}
+
+/* HEADER */
+.header{
+  background:linear-gradient(135deg,#2563eb,#4f46e5);
+  color:white;
+  border-radius:24px;
+  padding:25px;
+  box-shadow:0 15px 35px rgba(37,99,235,.25);
+  margin-bottom:18px;
+}
+
+.header-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+}
+
+.logo{
+  width:52px;
+  height:52px;
+  border-radius:16px;
+  background:rgba(255,255,255,.2);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:25px;
+}
+
+.header h1{
+  font-size:25px;
+  margin-bottom:4px;
+}
+
+.header p{
+  opacity:.85;
+  font-size:14px;
+}
+
+.live{
+  margin-top:20px;
+  background:rgba(255,255,255,.13);
+  padding:14px;
+  border-radius:16px;
+  text-align:center;
+}
+
+#jam{
+  font-size:30px;
+  font-weight:800;
+  letter-spacing:1px;
+}
+
+#tanggal{
+  margin-top:4px;
+  font-size:14px;
+}
+
+/* CARD */
+.card{
+  background:white;
+  border-radius:20px;
+  padding:20px;
+  margin-bottom:18px;
+  box-shadow:0 8px 25px rgba(15,23,42,.08);
+}
+
+.card-title{
+  font-size:18px;
+  font-weight:800;
+  margin-bottom:16px;
+}
+
+label{
+  display:block;
+  font-size:13px;
+  font-weight:700;
+  margin:13px 0 7px;
+}
+
+input,select,textarea{
+  width:100%;
+  border:1px solid #dbe2ea;
+  background:#f8fafc;
+  padding:13px 14px;
+  border-radius:12px;
+  font-size:15px;
+  outline:none;
+  transition:.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:#4f46e5;
+  background:white;
+  box-shadow:0 0 0 3px rgba(79,70,229,.1);
+}
+
+textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+.btn{
+  width:100%;
+  border:0;
+  border-radius:13px;
+  padding:14px;
+  margin-top:18px;
+  color:white;
+  background:linear-gradient(135deg,#2563eb,#4f46e5);
+  font-size:15px;
+  font-weight:800;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 20px rgba(37,99,235,.25);
+}
+
+.btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+/* INFO */
+.info{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:18px;
+}
+
+.info-box{
+  background:white;
+  border-radius:16px;
+  padding:15px;
+  box-shadow:0 6px 20px rgba(15,23,42,.06);
+}
+
+.info-box small{
+  display:block;
+  color:#64748b;
+  margin-bottom:5px;
+}
+
+.info-box strong{
+  font-size:21px;
+}
+
+/* SEARCH */
+.search{
+  margin-bottom:15px;
+}
+
+/* LIST */
+.list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:14px;
+  border:1px solid #edf0f5;
+  border-radius:14px;
+  background:#fafbff;
+}
+
+.student{
+  min-width:0;
+}
+
+.student strong{
+  display:block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.student small{
+  color:#64748b;
+  display:block;
+  margin-top:4px;
+}
+
+.right{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.badge{
+  padding:5px 10px;
+  border-radius:999px;
+  color:white;
+  font-size:11px;
+  font-weight:800;
+}
+
+.hadir{
+  background:#16a34a;
+}
+
+.sakit{
+  background:#f59e0b;
+}
+
+.izin{
+  background:#6366f1;
+}
+
+.alpa{
+  background:#ef4444;
+}
+
+.empty{
+  text-align:center;
+  padding:30px 10px;
+  color:#64748b;
+}
+
+.delete{
+  border:0;
+  background:#fee2e2;
+  color:#dc2626;
+  width:32px;
+  height:32px;
+  border-radius:9px;
+  cursor:pointer;
+}
+
+/* TOAST */
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:25px;
+  transform:translate(-50%,120px);
+  background:#172033;
+  color:white;
+  padding:13px 18px;
+  border-radius:12px;
+  font-size:14px;
+  opacity:0;
+  transition:.3s;
+  z-index:999;
+  box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+.toast.show{
+  transform:translate(-50%,0);
+  opacity:1;
+}
+
+.toast.success{
+  background:#16a34a;
+}
+
+.toast.error{
+  background:#dc2626;
+}
+
+/* FOOTER */
+.footer{
+  text-align:center;
+  color:#64748b;
+  font-size:12px;
+  padding:10px 0 20px;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+
+  .container{
+    padding:12px;
+  }
+
+  .header{
+    border-radius:20px;
+    padding:20px;
+  }
+
+  .header h1{
+    font-size:21px;
+  }
+
+  .logo{
+    width:45px;
+    height:45px;
+  }
+
+  #jam{
+    font-size:26px;
+  }
+
+  .info{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .info-box:last-child{
+    grid-column:span 2;
+  }
+
+  .row{
+    align-items:flex-start;
+  }
+
+  .right{
+    flex-shrink:0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+
+    <div class="header-top">
+
+      <div>
+        <h1>Absensi Siswa</h1>
+        <p>Kelas 8I • Sistem Kehadiran Digital</p>
+      </div>
+
+      <div class="logo">
+        📋
+      </div>
+
+    </div>
+
+    <div class="live">
+      <div id="jam">00:00:00</div>
+      <div id="tanggal">Memuat tanggal...</div>
+      <div style="font-size:11px;margin-top:5px;opacity:.75">
+        Waktu Indonesia Barat • WIB
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- STATISTIK -->
+  <div class="info">
+
+    <div class="info-box">
+      <small>Hadir</small>
+      <strong id="totalHadir">0</strong>
+    </div>
+
+    <div class="info-box">
+      <small>Izin</small>
+      <strong id="totalIzin">0</strong>
+    </div>
+
+    <div class="info-box">
+      <small>Sakit / Alpa</small>
+      <strong id="totalLain">0</strong>
+    </div>
+
+  </div>
+
+
+  <!-- FORM -->
+  <div class="card">
+
+    <div class="card-title">
+      📝 Isi Absensi
+    </div>
+
+    <label for="nama">
+      Nama Siswa
+    </label>
+
+    <input
+      id="nama"
+      type="text"
+      placeholder="Masukkan nama lengkap"
+      autocomplete="name"
+      maxlength="50"
+    >
+
+    <label for="ket">
+      Status Kehadiran
+    </label>
+
+    <select id="ket">
+
+      <option value="Hadir">
+        ✅ Hadir
+      </option>
+
+      <option value="Sakit">
+        🤒 Sakit
+      </option>
+
+      <option value="
