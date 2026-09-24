@@ -1,11 +1,81 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Absensi 8I</title><script src="https://cdn.tailwindcss.com"></script><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet"><style>body{font-family:Poppins,sans-serif}</style></head><body class="bg-[#f5f3ff] min-h-screen p-3"><div class="max-w-[420px] mx-auto"><div class="bg-gradient-to-br from-[#7c3aed] to-[#2563eb] rounded-[24px] p-6 text-white shadow-xl"><div class="text-[10px] tracking-[0.2em] opacity-70">8I • STUDENT SYSTEM</div><h1 class="text-[30px] font-extrabold mt-2">Absensi Siswa 📚</h1><p class="text-[12px] opacity-80">Isi kehadiranmu hari ini!</p><div class="bg-white/15 rounded-[16px] p-4 mt-4"><div id="jam" class="text-[38px] font-extrabold">00.00.00</div><div id="tgl" class="text-[12px]">Rabu, 23 Sep 2026</div></div></div><div class="bg-white rounded-[20px] p-5 mt-4 shadow-sm"><label class="text-[13px] font-bold">Nama lengkap</label><input id="nama" class="w-full mt-2 p-4 rounded-[12px] border-2 border-purple-200 outline-none" placeholder="Masukkan nama..."><div class="grid grid-cols-2 gap-3 mt-4"><button onclick="pilih('Hadir')" id="b-Hadir" class="status p-4 rounded-[12px] border-2 font-bold">✅ Hadir</button><button onclick="pilih('Izin')" id="b-Izin" class="status p-4 rounded-[12px] border-2 font-bold">📩 Izin</button><button onclick="pilih('Sakit')" id="b-Sakit" class="status p-4 rounded-[12px] border-2 font-bold">🥺 Sakit</button><button onclick="pilih('Alpa')" id="b-Alpa" class="status p-4 rounded-[12px] border-2 font-bold">❌ Alpa</button></div><button onclick="kirim()" class="w-full mt-5 bg-gradient-to-r from-[#7c3aed] to-[#2563eb] text-white p-4 rounded-[16px] font-bold">Kirim Absensi 🚀</button></div><div class="bg-white rounded-[20px] p-5 mt-4 shadow-sm"><div class="flex justify-between items-center"><b>Rekap Hari Ini</b><div class="flex gap-2"><button onclick="wa()" class="text-[11px] bg-green-500 text-white px-3 py-1.5 rounded-full font-bold">WA Gw</button><button onclick="dl()" class="text-[11px] bg-gray-100 px-3 py-1.5 rounded-full">Excel</button></div></div><div id="list" class="mt-3 text-[13px]"></div></div></div><script>
-let stt='';let NOMOR_WA='6285693039735';
-function jam(){let n=new Date();document.getElementById('jam').innerText=n.toLocaleTimeString('id-ID',{hour12:false}).replace(/:/g,'.');document.getElementById('tgl').innerText=n.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}setInterval(jam,1000);jam();
-function pilih(s){stt=s;document.querySelectorAll('.status').forEach(e=>e.className='status p-4 rounded-[12px] border-2 font-bold border-gray-200');let m={Hadir:'bg-green-100 border-green-500 text-green-700',Izin:'bg-blue-100 border-blue-500 text-blue-700',Sakit:'bg-yellow-100 border-yellow-500 text-yellow-700',Alpa:'bg-red-100 border-red-500 text-red-700'};document.getElementById('b-'+s).className='status p-4 rounded-[12px] border-2 font-bold '+m[s]}
-function kirim(){let nm=document.getElementById('nama').value.trim();if(!nm||!stt)return alert('Isi nama & status dulu!');let k=new Date().toISOString().slice(0,10);let A=JSON.parse(localStorage.a||'{}');if(!A[k])A[k]={};A[k][nm]=stt;localStorage.a=JSON.stringify(A);document.getElementById('nama').value='';alert('✅ '+nm+' : '+stt);R()}
-function R(){let A=JSON.parse(localStorage.a||'{}');let k=new Date().toISOString().slice(0,10);let d=A[k]||{};let h='';for(let nm in d)h+=`<div class="flex justify-between py-2 border-b"><span>${nm}</span><b>${d[nm]}</b></div>`;document.getElementById('list').innerHTML=h||'<div class="text-gray-400 text-center py-3">Belum ada</div>'}
-function dl(){let A=JSON.parse(localStorage.a||'{}');let c='Tanggal,Nama,Status\n';for(let k in A)for(let nm in A[k])c+=`${k},${nm},${A[k][nm]}\n`;let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c]));a.download='absen-8I.csv';a.click()}
-function wa(){let A=JSON.parse(localStorage.a||'{}');let k=new Date().toISOString().slice(0,10);let d=A[k]||{};if(!Object.keys(d).length)return alert('Belum ada absen hari ini');let t=`*REKAP ABSEN 8I - ${k}*%0A%0A`;for(let nm in d)t+=`- ${nm} : ${d[nm]}%0A`;t+=`%0ATotal: ${Object.keys(d).length} siswa`;window.open(`https://wa.me/${NOMOR_WA}?text=${t}`,'_blank')}
-R();
-</script></body></html>
-<button onclick="hapusSatu(index)">🗑️</button>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Absensi 8I</title>
+<style>
+body{font-family:Arial;background:#f5f7ff;padding:15px}
+h2{text-align:center}
+input,select{width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #ccc}
+.btn{width:100%;padding:12px;border:none;border-radius:8px;background:#3b82f6;color:white;font-weight:bold;margin-top:8px}
+.card{background:white;padding:15px;border-radius:12px;margin-top:15px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #eee}
+.badge{padding:3px 8px;border-radius:12px;font-size:12px;color:white}
+.alpa{background:#ef4444}.hadir{background:#22c55e}.sakit{background:#f59e0b}.izin{background:#6366f1}
+.del{background:#fee2e2;border:none;padding:5px 8px;border-radius:6px;cursor:pointer}
+</style>
+</head>
+<body>
+<h2>Absensi Siswa 8I</h2>
+<input id="nama" placeholder="Nama Siswa">
+<select id="ket">
+  <option value="Hadir">Hadir</option>
+  <option value="Sakit">Sakit</option>
+  <option value="Izin">Izin</option>
+  <option value="Alpa">Alpa</option>
+</select>
+<button class="btn" onclick="tambah()">Simpan Absensi</button>
+
+<div class="card">
+  <b>Rekap Hari Ini (Masuk ke raffsigma28@gmail.com)</b>
+  <div id="list" style="margin-top:10px">Loading...</div>
+  <button onclick="hapusSemua()" style="margin-top:10px;width:100%;background:#eee;border:none;padding:8px;border-radius:8px">Hapus Semua</button>
+</div>
+
+<script>
+const URL_GAS_LU = "https://script.google.com/macros/s/XXXX/exec"; // <- GANTI INI PAKE LINK WEB APP LU
+
+// Data lama biar gak hilang
+let key = 'absensi_8i';
+let dataLokal = JSON.parse(localStorage.getItem(key) || localStorage.getItem('absensi') || '[]');
+
+async function tambah(){
+  let nama = document.getElementById('nama').value;
+  let ket = document.getElementById('ket').value;
+  if(!nama) return alert('Isi nama');
+
+  if(URL_GAS_LU.includes("XXXX")){
+    alert("Link Google Sheet belum diganti! Ganti dulu URL_GAS_LU nya");
+    return;
+  }
+
+  // Kirim ke Google Sheet + Email lu
+  await fetch(URL_GAS_LU, {
+    method: "POST",
+    mode: "no-cors",
+    body: JSON.stringify({nama, ket})
+  });
+
+  alert("Absen terkirim ke raffsigma28@gmail.com!");
+  document.getElementById('nama').value='';
+  loadData();
+}
+
+async function loadData(){
+  try{
+    if(URL_GAS_LU.includes("XXXX")){
+      // Kalau belum ada link, tampilin data lokal dulu biar gak kosong
+      renderLokal();
+      return;
+    }
+    let res = await fetch(URL_GAS_LU);
+    let rows = await res.json();
+    let list = document.getElementById('list');
+    list.innerHTML = '';
+    rows.reverse().forEach(r=>{
+      // r = [tanggal, nama, ket, kelas]
+      let nama = r[1]; let ket = r[2];
+      list.innerHTML += `<div class="row"><span>${nama}</span><span><span class="badge ${ket.toLowerCase()}">${ket}</span></span></div>`;
+    });
+    if(rows.length==0) list.inner
